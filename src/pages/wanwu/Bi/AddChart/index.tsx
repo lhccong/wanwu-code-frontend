@@ -121,7 +121,7 @@ const AddChart: React.FC = () => {
                     loading={submitting}
                     disabled={submitting}
                   >
-                    提交
+                    提交666
                   </Button>
                   <Button htmlType="reset">重置</Button>
                 </Space>
