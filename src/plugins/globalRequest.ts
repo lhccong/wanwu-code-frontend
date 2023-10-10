@@ -17,7 +17,7 @@ const request = extend({
   //     ? 'http://user-backend.code-nav.cn'
   //     : 'http://localhost:8806',
   // requestType: 'form',
-  prefix: "https://qingxin.store/wanwu-code"
+  prefix: "https://qingxin.store/wanwu/wanwu-usercenter"
   // prefix: 'http://localhost:8806',
 });
 

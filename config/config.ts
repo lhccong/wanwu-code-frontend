@@ -49,13 +49,14 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import request from '@/plugins/globalRequest';",
-      schemaPath: 'https://qingxin.store/wanwu-code/api/v2/api-docs',
-      projectName: 'user',
-    },{
-      requestLibPath: "import request from '@/plugins/globalRequestBi';",
-      schemaPath: 'http://124.70.210.130/wanwu-code/bi/api/v2/api-docs',
-      projectName: 'bi',
+      schemaPath: 'https://qingxin.store/wanwu/wanwu-usercenter/api/v2/api-docs',
+      projectName: 'user'
     },
+    // {
+    //   requestLibPath: "import request from '@/plugins/globalRequestBi';",
+    //   schemaPath: 'http://124.70.210.130/wanwu-code/bi/api/v2/api-docs',
+    //   projectName: 'bi',
+    // },
 
   ],
   nodeModulesTransform: {
