@@ -1,4 +1,4 @@
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined, UserOutlined,UsbOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import type { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { stringify } from 'querystring';
@@ -50,6 +50,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         history.push(`/center/${currentUser?.id}`);
         return;
       }
+      if (key === 'api') {
+        history.push(`/api`);
+        return;
+      }
       history.push(`/account/${key}`);
     },
     [setInitialState],
@@ -99,6 +103,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       key: 'center',
       icon: <UserOutlined />,
       label: '个人中心',
+    },
+    {
+      key: 'api',
+      icon: <UsbOutlined />,
+      label: '开放平台',
     },
     {
       key: 'edit',

@@ -67,6 +67,21 @@ export async function getUserVOByIdUsingGET(
   });
 }
 
+/** getInvokerUser POST /api/user/getInvokerUser */
+export async function getInvokerUserUsingPOST(
+  body: API.UserAccessKeyRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseUser_>('/api/user/getInvokerUser', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** listUserByPage POST /api/user/list/page */
 export async function listUserByPageUsingPOST(
   body: API.UserQueryRequest,
@@ -161,6 +176,14 @@ export async function recommendUserUsingGET(
     params: {
       ...params,
     },
+    ...(options || {}),
+  });
+}
+
+/** refreshKey GET /api/user/refreshKey */
+export async function refreshKeyUsingGET(options?: { [key: string]: any }) {
+  return request<API.BaseResponseBoolean_>('/api/user/refreshKey', {
+    method: 'GET',
     ...(options || {}),
   });
 }

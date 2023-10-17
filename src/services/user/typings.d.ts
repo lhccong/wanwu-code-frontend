@@ -184,11 +184,13 @@ declare namespace API {
   };
 
   type LoginUserVO = {
+    accessKey?: string;
     concernNum?: number;
     createTime?: string;
     fansNum?: number;
     id?: number;
     postNum?: number;
+    secretKey?: string;
     tags?: UserTagVo[];
     updateTime?: string;
     userAvatar?: string;
@@ -403,12 +405,14 @@ declare namespace API {
   };
 
   type TokenLoginUserVo = {
+    accessKey?: string;
     concernNum?: number;
     createTime?: string;
     fansNum?: number;
     id?: number;
     postNum?: number;
     saTokenInfo?: SaTokenInfo;
+    secretKey?: string;
     tags?: UserTagVo[];
     updateTime?: string;
     userAvatar?: string;
@@ -422,6 +426,7 @@ declare namespace API {
   };
 
   type User = {
+    accessKey?: string;
     concernNum?: number;
     createTime?: string;
     fansNum?: number;
@@ -429,6 +434,7 @@ declare namespace API {
     isDelete?: number;
     mpOpenId?: string;
     postNum?: number;
+    secretKey?: string;
     tags?: string;
     unionId?: string;
     updateTime?: string;
@@ -438,6 +444,11 @@ declare namespace API {
     userPassword?: string;
     userProfile?: string;
     userRole?: string;
+  };
+
+  type UserAccessKeyRequest = {
+    accessKey?: string;
+    salt?: string;
   };
 
   type UserAddRequest = {
@@ -517,12 +528,14 @@ declare namespace API {
   };
 
   type UserVO = {
+    accessKey?: string;
     concernNum?: number;
     createTime?: string;
     fansNum?: number;
     hasConcern?: boolean;
     id?: number;
     postNum?: number;
+    secretKey?: string;
     similarity?: number;
     tags?: UserTagVo[];
     userAvatar?: string;

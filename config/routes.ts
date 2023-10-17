@@ -22,6 +22,7 @@ export default [
   },
   { path: '/notification', component: './Notification', hideInMenu: true },
   { name: '编辑个人信息', path: '/edit', component: './user/Message', hideInMenu: true },
+  { name: '开放平台', path: '/api', component: './wanwu/Api/OpenCenter', hideInMenu: true },
   { name: '个人中心', path: '/center/:userId', component: './user/Center', hideInMenu: true },
   { name: '个人信息', path: '/userMessage/:userId', component: './user/Center', hideInMenu: true },
   {
@@ -51,6 +52,7 @@ export default [
 
     // access: 'canAdmin',
     routes: [
+
       {
         path: '/wanwu/bi',
         name: 'onLineBI',
@@ -75,10 +77,33 @@ export default [
     ],
   },
   {
-    path: '/admin/userMange',
-    name: '用户管理',
+    path: '/interface_info',
+    routes: [
+      { name: '接口详情', path: '/interface_info/:id', component: './wanwu/Api/InterfaceInfo', hideInMenu: true },
+    ],
+  },
+  {
+    path: '/admin',
+    name: '管理中心',
     icon: 'icon-a-20230816meishitubiao_jiancan-shousi1',
-    component: './UserManage',
+    // access: 'canAdmin',
+    routes: [
+      {
+        path: '/admin/userMange',
+        name: '用户管理',
+        icon: 'crown',
+        component: './manages/UserManage',
+      },
+      {
+        path: '/admin/apiMange',
+        name: '接口管理',
+        icon: 'crown',
+        component: './manages/ApiManage',
+      },
+      {
+        component: './404',
+      },
+    ],
     access: 'canAdmin',
   },
   {

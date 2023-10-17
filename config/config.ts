@@ -57,6 +57,11 @@ export default defineConfig({
     //   schemaPath: 'http://124.70.210.130/wanwu-code/bi/api/v2/api-docs',
     //   projectName: 'bi',
     // },
+    {
+      requestLibPath: "import request from '@/plugins/globalRequestApi';",
+      schemaPath: 'https://qingxin.store/wanwu/wanwu-api/api/v2/api-docs',
+      projectName: 'api'
+    },
 
   ],
   nodeModulesTransform: {
