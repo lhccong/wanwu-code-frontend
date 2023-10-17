@@ -230,7 +230,7 @@ const APIManage: React.FC = () => {
           修改
         </a>,
         record.status === 0 ? <a
-          key="config"
+          key="online"
           onClick={() => {
             handleOnline(record);
           }}
@@ -239,7 +239,7 @@ const APIManage: React.FC = () => {
         </a> : null,
         record.status === 1 ? <Button
           type="text"
-          key="config"
+          key="offline"
           danger
           onClick={() => {
             handleOffline(record);
@@ -249,7 +249,7 @@ const APIManage: React.FC = () => {
         </Button> : null,
         <Button
           type="text"
-          key="config"
+          key="remvoe"
           danger
           onClick={() => {
             handleRemove(record);
