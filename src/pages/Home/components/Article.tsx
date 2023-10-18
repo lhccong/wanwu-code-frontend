@@ -342,12 +342,12 @@ const Article: React.FC<ArticleProps> = ({ data, type, updateInfo }) => {
                       <>
                         <div>
                           <Avatar
-                            onClick={() => history.push(`/user/${userId}`)}
+                            onClick={() => history.push(`/userMessage/${userId}`)}
                             className={avatarCss}
                             src={user?.userAvatar}
                             size="small"
                           />
-                          <a href={`/user/${userId}`}> {user?.userName} </a>
+                          <a onClick={() => history.push(`/userMessage/${userId}`)}> {user?.userName} </a>
                         </div>
 
                         <div>发布于</div>
