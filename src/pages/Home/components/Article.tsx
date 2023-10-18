@@ -62,7 +62,7 @@ const Article: React.FC<ArticleProps> = ({ data, type, updateInfo }) => {
     },
     {
       key: '1',
-      label: <a href={`/note/settings/${id}`}>配置</a>,
+      label: <a onClick={() => history.push(`/note/settings/${id}`)}>配置</a>,
       icon: <SettingOutlined />,
     },
     {
