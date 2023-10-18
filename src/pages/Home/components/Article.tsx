@@ -285,7 +285,7 @@ const Article: React.FC<ArticleProps> = ({ data, type, updateInfo }) => {
         <List.Item.Meta
           title={
             <>
-              <a href={`/note/${id}`}>{title}</a>
+              <a onClick={() => history.push(`/note/${id}`)}>{title}</a>
               {/*{prime === 1 && <Tag style={{float: 'right'}} icon={<StarOutlined/>} color="#FA541C">精华</Tag>}*/}
               {
                 <Tag style={{ float: 'right' }} icon={<StarOutlined />} color="#FA541C">

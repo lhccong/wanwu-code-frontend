@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       const user = await userLoginUsingPOST({
         ...values,
       });
-      if (user) {
+      if (user.data) {
         localStorage.setItem('tokenName', user.data?.saTokenInfo?.tokenName as string);
         localStorage.setItem('tokenValue', user.data?.saTokenInfo?.tokenValue as string);
         const defaultLoginSuccessMessage = '登录成功！';

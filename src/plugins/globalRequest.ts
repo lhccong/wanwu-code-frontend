@@ -48,17 +48,17 @@ request.interceptors.response.use(async (response, options): Promise<any> => {
   const res = await response.clone().json();
   if (res.code === 0) {
     return res;
-  }else if (res.code === 40100){
-    message.error('请先登录');
-    history.replace({
-      pathname: '/user/login',
-      search: stringify({
-        redirect: location.pathname,
-      }),
-    });
   }else {
     message.error(res.message);
-    history.push("/")
+    if (res.code === 40100){
+      history.replace({
+        pathname: '/user/login',
+        search: stringify({
+          redirect: location.pathname,
+        }),
+      });
+    }
+
   }
   return res
 });

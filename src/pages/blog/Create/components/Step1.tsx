@@ -49,7 +49,7 @@ const checksynopsis = (_: any, value: string) => {
     return promise.reject('文章摘要必须填写!');
   }
   //有值的情况
-  if (value.length < 50 || value.length > 250) {
+  if (value.length > 250) {
     return promise.reject('文章摘要的长度不符合要求！');
   }
   return promise.resolve();
@@ -145,20 +145,25 @@ const Step1: React.FC<Step1Props> = forwardRef(({ articleId }, ref) => {
       <div style={{ marginTop: 8 }}>上传</div>
     </div>
   );
-
+  const headers = {};
+  const tokenName = localStorage.getItem('tokenName');
+  const tokenValue = localStorage.getItem('tokenValue');
+  if (tokenName && tokenValue) {
+    headers[tokenName] = tokenValue;
+  }
   const props: UploadProps = {
     accept: 'image/png, image/jpeg',
-    action: 'https://upload-z2.qiniup.com',
+    action: 'https://qingxin.store/wanwu/wanwu-usercenter/api/file/minio/upload',
     listType: 'picture-card',
     fileList,
     onPreview: handlePreview,
     onChange: handleChange,
+    headers: headers,
     data: async (file) => {
-      const ext = file.name.substring(file.name.lastIndexOf('.'));
-      const res = await policyUsingGET();
+      const ext = file.name
+      // const res = await policyUsingGET();
       return {
-        token: res.data?.token,
-        key: res.data?.dir + '/' + UUID() + ext,
+        key: ext,
       };
     },
   };
@@ -179,9 +184,10 @@ const Step1: React.FC<Step1Props> = forwardRef(({ articleId }, ref) => {
             ...values,
             tags: tags,
             content: '作者尚未填写🌈',
-            imgList: fileList.map(
-              (file) => `http://s0t7ttxrg.hn-bkt.clouddn.com/${file.response.key}`,
-            ),
+            imgList: fileList.filter((file) => StringUtils.isNotEmpty(file.response))
+              .map(
+                (file) => `${file.response.data}`,
+              ),
           };
 
           const res = await addPostUsingPOST(params);
@@ -202,6 +208,7 @@ const Step1: React.FC<Step1Props> = forwardRef(({ articleId }, ref) => {
       if (!articleId) {
         return;
       }
+
       //首先进行参数的校验
       form
         .validateFields()
@@ -216,8 +223,9 @@ const Step1: React.FC<Step1Props> = forwardRef(({ articleId }, ref) => {
             // tags?: string[];
             // title?: string;
             // tags: selectedIds,
-            imgList: fileList.map(
-              (file) => `http://s0t7ttxrg.hn-bkt.clouddn.com/${file.response.key}`,
+            imgList: fileList.filter((file) => StringUtils.isNotEmpty(file.response))
+              .map(
+              (file) => `${file.response.data}`,
             ),
           };
           const res = await editPostUsingPOST(params);
@@ -307,7 +315,7 @@ const Step1: React.FC<Step1Props> = forwardRef(({ articleId }, ref) => {
             rules={[{ validator: checksynopsis }]}
             required={true}
           >
-            <TextArea placeholder="请输入文章摘要，50~250字之间" rows={3} />
+            <TextArea placeholder="请输入文章摘要" rows={3} />
           </FormItem>
 
           <FormItem label="标签">

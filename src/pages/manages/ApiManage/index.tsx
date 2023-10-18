@@ -50,6 +50,7 @@ const APIManage: React.FC = () => {
       hide();
       message.success('创建成功');
       handleModalVisible(false);
+      actionRef.current?.reload();
       return true;
     } catch (error: any) {
       hide();
@@ -160,6 +161,17 @@ const APIManage: React.FC = () => {
    * */
 
   const columns: ProColumns<API.InterfaceInfo>[] = [
+    // {
+    //   title: '接口名称',
+    //   dataIndex: 'name',
+    //   valueType: 'text',
+    //   // render: (text, record, index) => `${index + 1}`,
+    //   formItemProps: {
+    //     rules: [{
+    //       required: true,
+    //     }]
+    //   }
+    // },
     {
       title: '接口名称',
       dataIndex: 'name',
@@ -179,15 +191,30 @@ const APIManage: React.FC = () => {
       title: '请求方法',
       dataIndex: 'method',
       valueType: 'text',
+      formItemProps: {
+        rules: [{
+          required: true,
+        }]
+      }
     },
     {
       title: 'url',
       dataIndex: 'url',
       valueType: 'text',
+      formItemProps: {
+        rules: [{
+          required: true,
+        }]
+      }
     },
     {
       title: '请求参数',
       dataIndex: 'requestParams',
+      valueType: 'jsonCode',
+    },
+    {
+      title: '请求示例',
+      dataIndex: 'example',
       valueType: 'jsonCode',
     },
     {
@@ -267,7 +294,7 @@ const APIManage: React.FC = () => {
         headerTitle={'API文档'}
         actionRef={actionRef}
         rowKey="key"
-        style={{width:1424,margin: "auto"}}
+        style={{width:1424,margin: "auto",borderRadius:8}}
         search={{
           labelWidth: "auto",
         }}

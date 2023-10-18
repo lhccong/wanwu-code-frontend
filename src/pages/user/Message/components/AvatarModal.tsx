@@ -63,7 +63,7 @@ const UploadModal: React.FC<Props> = ({ visible, onCancel, onSave }) => {
   };
 
   const save = async () => {
-    const res = await policyUsingGET();
+    // const res = await policyUsingGET();
     if (cropperRef.current?.cropper.getCroppedCanvas()) {
       cropperRef.current?.cropper.getCroppedCanvas().toBlob((blob) => {
         if (!blob) {
@@ -71,18 +71,29 @@ const UploadModal: React.FC<Props> = ({ visible, onCancel, onSave }) => {
           return;
         }
         const formData = new FormData();
-        formData.append('token', res.data?.token as string);
-        formData.append('key', res.data?.dir + '/' + UUID() + '.jpg');
-        formData.append('file', blob);
-
+        // formData.append('token', res.data?.token as string);
+        // formData.append('key', res.data?.dir + '/' + UUID() + '.jpg');
+        // 创建一个带有正确文件后缀的新文件名
+        const fileName = Date.now()+".jpeg";
+        // 创建一个新的 File 对象，并设置文件名
+        const file = new File([blob], fileName);
+        formData.append('file', file);
+        const tokenName = localStorage.getItem('tokenName');
+        const tokenValue = localStorage.getItem('tokenValue');
+        const headers = {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        };
+        if (tokenName && tokenValue) {
+          headers[tokenName] = tokenValue;
+        }
         uploadAvatar(formData, {
           contentType: false,
           processData: false,
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          headers: headers,
           withCredentials: false,
         }).then((response) => {
           // //修改currentUser里的avatar
-          onSave('http://s0t7ttxrg.hn-bkt.clouddn.com/' + response.data.key);
+          onSave( response.data.data);
           //
           message.success('上传成功');
           onCancel?.();
