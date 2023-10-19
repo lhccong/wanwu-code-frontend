@@ -1,4 +1,4 @@
-import {Input, Space} from 'antd';
+import {Button, Input, Space} from 'antd';
 import React from 'react';
 import {useModel} from 'umi';
 import Avatar from './AvatarDropdown';
@@ -7,6 +7,9 @@ import {css} from '@emotion/css';
 import CreateNote from '@/components/CreateNote';
 import MessageList from "@/components/MessageList";
 import History from "@/components/History";
+import {history} from "@@/core/history";
+import Tooltip from 'antd/es/tooltip';
+import {SearchOutlined} from "@ant-design/icons";
 
 export type SiderTheme = 'light' | 'dark';
 const GlobalHeaderRight: React.FC = () => {
@@ -38,14 +41,18 @@ const GlobalHeaderRight: React.FC = () => {
   `;
   return (
     <Space className={className}>
-      <Input
-        placeholder="搜你所想🔍"
-        allowClear
-        style={{
-          borderRadius: 20,
-          width: 320,
-        }}
-      />
+      {/*<Input*/}
+      {/*  placeholder="搜你所想🔍"*/}
+      {/*  allowClear*/}
+      {/*  onClick={() => history.push(`/search`)}*/}
+      {/*  style={{*/}
+      {/*    borderRadius: 20,*/}
+      {/*    width: 320,*/}
+      {/*  }}*/}
+      {/*/>*/}
+      {/*<Tooltip title="search">*/}
+      <Button style={{borderRadius:8}} type="primary" onClick={() => history.push(`/search`)} icon={<SearchOutlined />} >搜你所想🔍</Button>
+      {/*</Tooltip>*/}
       <span className={actionClassName}>
         <Avatar/>
       </span>

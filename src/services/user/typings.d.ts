@@ -168,6 +168,11 @@ declare namespace API {
     pwd?: string;
   };
 
+  type downloadUsingGETParams = {
+    /** filepath */
+    filepath: string;
+  };
+
   type getPostVOByIdUsingGETParams = {
     /** id */
     id?: number;
@@ -209,6 +214,19 @@ declare namespace API {
   type OrderItem = {
     asc?: boolean;
     column?: string;
+  };
+
+  type PageObject_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: Record<string, any>[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
   };
 
   type PagePicture_ = {
@@ -398,10 +416,7 @@ declare namespace API {
   };
 
   type SearchVO = {
-    dataList?: Record<string, any>[];
-    pictureList?: Picture[];
-    postList?: PostVO[];
-    userList?: UserVO[];
+    pageData?: PageObject_;
   };
 
   type TokenLoginUserVo = {

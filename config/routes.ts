@@ -45,6 +45,7 @@ export default [
     icon: 'icon-a-20230816meishitubiao_xinlingshou-waimai',
     component: './blog',
   },
+  { name: '搜索万物', path: '/search', component: './SearchWanwu', hideInMenu: true },
   {
     path: '/wanwu',
     name: '万物',
