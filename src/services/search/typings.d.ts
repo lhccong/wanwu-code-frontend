@@ -1,7 +1,7 @@
 declare namespace Search {
   type SearchRequest = {
     type: string;
-    keyword: string;
+    searchText: string;
     current: number;
     tags?: string[];
   }

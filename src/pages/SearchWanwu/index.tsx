@@ -16,8 +16,8 @@ const SearchPage: React.FC = () => {
   const [type, setType] = useState(()=>{
     return urlSearchParams.get('type') || 'csdn';
   });
-  const [keyword, setKeyword] = useState(()=>{
-    return urlSearchParams.get('keyword') || '';
+  const [searchText, setKeyword] = useState(()=>{
+    return urlSearchParams.get('searchText') || '';
   });
   const [pageNum, setPageNum] = useState(()=>{
     return Number(urlSearchParams.get('pageNum')) || 1;
@@ -46,16 +46,16 @@ const SearchPage: React.FC = () => {
   //监听路径参数变化
   useEffect(()=>{
     const params: Search.SearchRequest = {
-      type: urlSearchParams.get('type') || 'blog',
-      keyword: urlSearchParams.get('keyword') || '',
+      type: urlSearchParams.get('type') || 'csdn',
+      searchText: urlSearchParams.get('searchText') || '',
       current: Number(urlSearchParams.get('pageNum')) || 1,
       tags: urlSearchParams.getAll('tags') || []
     };
     setType(params.type);
-    setKeyword(params.keyword);
+    setKeyword(params.searchText);
     setPageNum(params.pageNum);
     setTags(params.tags || []);
-    if(StringUtils.isNotEmpty(params.keyword) ||
+    if(StringUtils.isNotEmpty(params.searchText) ||
       (params.type === 'blog' || params.type === 'user') && params.tags && params.tags.length > 0){
       setLoading(true);
       searchAllUsingPOST(params).then(res => {
@@ -81,10 +81,10 @@ const SearchPage: React.FC = () => {
     setKeyword(value);
     const params = new URLSearchParams({
       type,
-      keyword: value,
-      pageSize: pageNum.toString(),
+      searchText: value,
+      // pageSize: pageNum.toString(),
     });
-    tags.forEach(tag => params.append('tags', tag));
+    // tags.forEach(tag => params.append('tags', tag));
     //将搜索参数拼接到query上
     history.push(`search?${params.toString()}`);
   }
@@ -93,7 +93,7 @@ const SearchPage: React.FC = () => {
     setPageNum(pageNum);
     const params = new URLSearchParams({
       type,
-      keyword,
+      searchText,
       pageNum: pageNum.toString(),
     });
     tags.forEach(tag => params.append('tags', tag));
@@ -105,7 +105,7 @@ const SearchPage: React.FC = () => {
     setTags(selectedTags);
     const params = new URLSearchParams({
       type,
-      keyword,
+      searchText,
       pageNum: pageNum.toString(),
     });
     selectedTags.forEach(tag => params.append('tags', tag));
@@ -118,7 +118,7 @@ const SearchPage: React.FC = () => {
     setTags([]);
     const params = new URLSearchParams({
       type: key,
-      keyword,
+      searchText,
     });
     //将搜索类别拼接到path上
     history.push(`search?${params.toString()}`);
@@ -179,7 +179,7 @@ const SearchPage: React.FC = () => {
       <Card style={{margin: '19px auto 32px auto', width: '50%',borderRadius:8}}>
         <Search
           size='large'
-          defaultValue={keyword}
+          defaultValue={searchText}
           onChange={(e)=>{
             setKeyword(e.target.value)
           }}
