@@ -51,7 +51,7 @@ const GlobalHeaderRight: React.FC = () => {
       {/*  }}*/}
       {/*/>*/}
       {/*<Tooltip title="search">*/}
-      <Button style={{borderRadius:8}} type="primary" onClick={() => history.push(`/search`)} icon={<SearchOutlined />} >搜你所想🔍</Button>
+      <Button style={{borderRadius:8}} type="primary" onClick={() => history.push(`/search??type=csdn&keyword=`)} icon={<SearchOutlined />} >搜你所想🔍</Button>
       {/*</Tooltip>*/}
       <span className={actionClassName}>
         <Avatar/>
