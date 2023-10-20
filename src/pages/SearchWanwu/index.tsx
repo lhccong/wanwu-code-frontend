@@ -39,7 +39,7 @@ const SearchPage: React.FC = () => {
       case 'blog': setBlogList(data as API.PostVO[]);break;
       case 'user': setUserList(data as API.UserVO[]);break;
       case 'csdn': setCsdnBlogList(data as Search.CsdnBlog[]);break;
-      case 'cnBlog': setCnBlogList(data as Search.CnBlog[]);break;
+      case 'cnblog': setCnBlogList(data as Search.CnBlog[]);break;
     }
   }
 
