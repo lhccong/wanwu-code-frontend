@@ -15,7 +15,7 @@ const request = extend({
   //     ? 'http://user-backend.code-nav.cn'
   //     : 'http://localhost:8806',
   // requestType: 'form',
-  prefix: "http://124.70.210.130/wanwu-code/bi"
+  prefix: "https://qingxin.store/wanwu/wanwu-bi"
   // prefix: 'http://localhost:8807',
 });
 
