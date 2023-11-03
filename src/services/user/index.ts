@@ -4,6 +4,7 @@
 // API 唯一标识：
 import * as wxMpController from './wxMpController';
 import * as loginController from './loginController';
+import * as liaotianshixiangguanjiekou from './liaotianshixiangguanjiekou';
 import * as fileController from './fileController';
 import * as ossController from './ossController';
 import * as userTagController from './userTagController';
@@ -17,6 +18,7 @@ import * as userController from './userController';
 export default {
   wxMpController,
   loginController,
+  liaotianshixiangguanjiekou,
   fileController,
   ossController,
   userTagController,

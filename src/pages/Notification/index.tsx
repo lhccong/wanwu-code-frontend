@@ -1,12 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, Card, Col, Row} from "antd";
-import Chat from "@/pages/Notification/components/Chat";
 import {IconFont} from "@/utils";
-import LikeList from "@/pages/Notification/components/LikeList";
-import CommentList from "@/pages/Notification/components/CommentList";
 import {useLocation} from "umi";
 import {clearNotificationUsingPOST, getNoticeCountUsingGET} from "@/services/user/notificationController";
 import {css} from "@emotion/css";
+import Chat from "@/pages/Notification/components/Chat";
 
 const Notification: React.FC = () => {
   const location = useLocation();
@@ -118,14 +116,14 @@ const Notification: React.FC = () => {
       <Col span={3} style={{borderRadius: 8}}>
         <Card
           bordered={false}
-          style={{height: 'calc(100vh - 83px)', background: 'rgba(255, 255, 255, 0.7)',borderRadius:8}}
+          style={{height: 'calc(100vh - 83px)', borderRadius:8}}
           bodyStyle={{padding: 0}}>
           <div style={{width: '100%', display: 'flex', height: 62, justifyContent: 'center', alignItems: 'center'}}>
             <IconFont type="icon-fabu" style={{marginRight: 10, fontSize: 14, fontWeight: 700}}/>
-            <div style={{ color: '#333', fontSize: 14, fontWeight: 700}}>消息中心🌈</div>
+            <div style={{  fontSize: 14, fontWeight: 700}}>消息中心🌈</div>
           </div>
 
-          <ul style={{padding: '0 0 0 20px', margin: 0,borderTop: "1px solid #8798AE"}}>
+          <ul style={{padding: '0 0 0 20px', margin: 0}}>
             <li className={liCss[0]} style={{borderRadius: 8}}>
               <IconFont type='icon-dot'/>
               <a onClick={() => changeType('like')}>收到的赞</a>
@@ -178,7 +176,7 @@ const Notification: React.FC = () => {
           <div style={{height: 'calc(100vh - 136px)'}}>
             {/*{active === '收到的赞' && <LikeList likeCount={likeCount}/>}*/}
             {/*{active === '回复我的' && <CommentList commentCount={commentCount}/>}*/}
-            {/*{active === '我的消息' && <Chat ref={childRef}/>}*/}
+            {active === '我的消息' && <Chat ref={childRef}/>}
             {active === '系统通知' &&
               <div style={{
                 width: '100%',

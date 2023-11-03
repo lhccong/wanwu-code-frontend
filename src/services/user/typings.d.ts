@@ -1,7 +1,44 @@
 declare namespace API {
+  type Badge = {
+    /** 徽章说明 */
+    describe?: string;
+    /** 徽章图像 */
+    img?: string;
+  };
+
   type BaseResponseBoolean_ = {
     code?: number;
     data?: boolean;
+    message?: string;
+  };
+
+  type BaseResponseChatMemberResp_ = {
+    code?: number;
+    data?: ChatMemberResp_;
+    message?: string;
+  };
+
+  type BaseResponseChatMemberStatisticResp_ = {
+    code?: number;
+    data?: ChatMemberStatisticResp;
+    message?: string;
+  };
+
+  type BaseResponseChatMessageResp_ = {
+    code?: number;
+    data?: ChatMessageResp;
+    message?: string;
+  };
+
+  type BaseResponseChatMessageResp2 = {
+    code?: number;
+    data?: ChatMessageResp_;
+    message?: string;
+  };
+
+  type BaseResponseChatRoomResp_ = {
+    code?: number;
+    data?: ChatRoomResp_;
     message?: string;
   };
 
@@ -77,6 +114,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseRoomFriendVo_ = {
+    code?: number;
+    data?: RoomFriendVo_;
+    message?: string;
+  };
+
   type BaseResponseSearchVO_ = {
     code?: number;
     data?: SearchVO;
@@ -111,6 +154,87 @@ declare namespace API {
     code?: number;
     data?: UserVO;
     message?: string;
+  };
+
+  type ChatMemberResp = {
+    /** 在线状态 1在线 2离线 */
+    activeStatus?: number;
+    /** 头像 */
+    avatar?: string;
+    /** 最后一次上下线时间 */
+    lastOptTime?: string;
+    /** 用户名称 */
+    name?: string;
+    /** uid */
+    uid?: number;
+  };
+
+  type ChatMemberResp_ = {
+    /** 游标（下次翻页带上这参数） */
+    cursor?: string;
+    /** 是否最后一页 */
+    isLast?: boolean;
+    /** 数据列表 */
+    list?: ChatMemberResp[];
+  };
+
+  type ChatMemberStatisticResp = {
+    /** 在线人数 */
+    onlineNum?: number;
+    /** 总人数 */
+    totalNum?: number;
+  };
+
+  type ChatMessageMarkReq = {
+    /** 动作类型 1确认 2取消 */
+    actType?: number;
+    /** 标记类型 1点赞 2举报 */
+    markType?: number;
+    /** 消息id */
+    msgId?: number;
+  };
+
+  type ChatMessageReq = {
+    /** 消息内容 */
+    content?: string;
+    /** 回复的消息id,如果没有别传就好 */
+    replyMsgId?: number;
+    /** 会话id */
+    roomId?: number;
+  };
+
+  type ChatMessageResp = {
+    fromUser?: UserInfo;
+    message?: Message;
+  };
+
+  type ChatMessageResp_ = {
+    /** 游标（下次翻页带上这参数） */
+    cursor?: string;
+    /** 是否最后一页 */
+    isLast?: boolean;
+    /** 数据列表 */
+    list?: ChatMessageResp[];
+  };
+
+  type ChatRoomResp = {
+    /** 会话id */
+    id?: number;
+    /** 房间最后活跃时间 */
+    lastActiveTime?: string;
+    /** 会话名称 */
+    name?: string;
+    /** 会话类型 1大群聊 2沸点 */
+    type?: number;
+  };
+
+  type ChatRoomResp_ = {
+    /** 游标（下次翻页带上这参数） */
+    cursor?: string;
+    /** 是否最后一页 */
+    isLast?: boolean;
+    /** 数据列表 */
+    list?: ChatRoomResp[];
   };
 
   type checkUsingGETParams = {
@@ -173,9 +297,39 @@ declare namespace API {
     filepath: string;
   };
 
+  type getMemberPageUsingGETParams = {
+    /** 游标（初始为null，后续请求附带上次翻页的游标） */
+    cursor?: string;
+    /** 页面大小 */
+    pageSize?: number;
+  };
+
+  type getMsgPageUsingGETParams = {
+    /** 游标（初始为null，后续请求附带上次翻页的游标） */
+    cursor?: string;
+    /** 页面大小 */
+    pageSize?: number;
+    /** 会话id */
+    roomId: number;
+  };
+
   type getPostVOByIdUsingGETParams = {
     /** id */
     id?: number;
+  };
+
+  type getRoomFriendVoPageUsingGETParams = {
+    /** 游标（初始为null，后续请求附带上次翻页的游标） */
+    cursor?: string;
+    /** 页面大小 */
+    pageSize?: number;
+  };
+
+  type getRoomPageUsingGETParams = {
+    /** 游标（初始为null，后续请求附带上次翻页的游标） */
+    cursor?: string;
+    /** 页面大小 */
+    pageSize?: number;
   };
 
   type getUserByIdUsingGETParams = {
@@ -202,6 +356,32 @@ declare namespace API {
     userName?: string;
     userProfile?: string;
     userRole?: string;
+  };
+
+  type Message = {
+    /** 消息内容 */
+    content?: string;
+    /** 消息id */
+    id?: number;
+    messageMark?: MessageMark;
+    reply?: ReplyMsg;
+    /** 消息发送时间 */
+    sendTime?: string;
+    /** 消息类型 1正常文本 2.爆赞 （点赞超过10）3.危险发言（举报超5） */
+    type?: number;
+    /** 消息链接映射 */
+    urlTitleMap?: Record<string, any>;
+  };
+
+  type MessageMark = {
+    /** 举报数 */
+    dislikeCount?: number;
+    /** 点赞数 */
+    likeCount?: number;
+    /** 该用户是否已经举报 0否 1是 */
+    userDislike?: number;
+    /** 该用户是否已经点赞 0否 1是 */
+    userLike?: number;
   };
 
   type NotificationCountVo = {
@@ -392,6 +572,39 @@ declare namespace API {
     num?: number;
   };
 
+  type ReplyMsg = {
+    /** 是否可消息跳转 0否 1是 */
+    canCallback?: number;
+    /** 消息内容 */
+    content?: string;
+    /** 跳转间隔的消息条数 */
+    gapCount?: number;
+    /** 消息id */
+    id?: number;
+    /** 用户名称 */
+    username?: string;
+  };
+
+  type RoomFriendVo = {
+    avatar?: string;
+    fromUid?: number;
+    fromUsername?: string;
+    id?: number;
+    lastMessage?: string;
+    roomId?: number;
+    unread?: number;
+    updateTime?: string;
+  };
+
+  type RoomFriendVo_ = {
+    /** 游标（下次翻页带上这参数） */
+    cursor?: string;
+    /** 是否最后一页 */
+    isLast?: boolean;
+    /** 数据列表 */
+    list?: RoomFriendVo[];
+  };
+
   type SaTokenInfo = {
     isLogin?: boolean;
     loginDevice?: string;
@@ -472,6 +685,18 @@ declare namespace API {
     userAvatar?: string;
     userName?: string;
     userRole?: string;
+  };
+
+  type UserInfo = {
+    /** 头像 */
+    avatar?: string;
+    badge?: Badge;
+    /** 归属地 */
+    locPlace?: string;
+    /** 用户id */
+    uid?: number;
+    /** 用户名称 */
+    username?: string;
   };
 
   type userLoginByWxOpenUsingGETParams = {

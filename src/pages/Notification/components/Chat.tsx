@@ -14,8 +14,8 @@ import {
   Sidebar
 } from "@chatscope/chat-ui-kit-react";
 import {useLocation, useModel,history} from "umi";
-import {getConversationByTargetUid, listConversationVoByPage, listMessageVoByPage} from "@/services/message/api";
 import {StringUtils} from "@/utils";
+import {getMsgPageUsingGET, getRoomFriendVoPageUsingGET} from "@/services/user/liaotianshixiangguanjiekou";
 
 const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
   const { initialState} = useModel('@@initialState');
@@ -25,16 +25,16 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
   const targetUid = Number(urlSearchParams.get('targetUid'));
   const msgListRef = useRef(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [conversations, setConversations] = useState<Message.Conversation[]>([]);
+  const [conversations, setConversations] = useState<API.RoomFriendVo[]>([]);
   const [msgPageNum, setMsgPageNum] = useState(1);
   const [msgTotal, setMsgTotal] = useState(0);
-  const [messages, setMessages] = useState<Message.MessageVo[]>([]);
-  const [activeConversation, setActiveConversation] = useState<Message.Conversation>();
+  const [messages, setMessages] = useState<API.ChatMessageResp[]>([]);
+  const [activeConversation, setActiveConversation] = useState<API.RoomFriendVo>();
   const [messageInputValue, setMessageInputValue] = useState("");
   const [loadingMore, setLoadingMore] = useState(false);
   const [initLoaded, setInitLoaded] = useState(false);
   const [value, setValue] = useState("");
-  const [searchConversations, setSearchConversations] = useState<Message.Conversation[]>([]);
+  const [searchConversations, setSearchConversations] = useState<API.RoomFriendVo[]>([]);
 
   //暴露的方法
   useImperativeHandle(ref, () => ({
@@ -47,22 +47,23 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
 
   //首先获取所有conversation
   useEffect(()=>{
-    listConversationVoByPage({pageNum: 1, pageSize: 30}).then(res => {
-      if(res.code === 200) {
-        const {records} = res.data;
+    getRoomFriendVoPageUsingGET({pageSize: 30}).then(res => {
+      if(res.code === 0) {
+        const records = res.data?.list;
         //没有指定私聊对象
-        if(records.length > 0 && targetUid === 0){
+        if(records&&records.length > 0 && targetUid === 0){
           setConversations(records);
         }
         //指定了私聊对象
-        else if(targetUid !== 0){
-          const filter = records.filter((record: Message.Conversation) => record.fromUid === targetUid);
+        else if(targetUid !== 0&&records){
+          console.log(records);
+          const filter = records.filter((record: API.RoomFriendVo) => record.fromUid === targetUid);
           //没跟这个人私聊过（新建conversation并将其置顶）
           if(filter.length === 0){
-            getConversationByTargetUid(targetUid).then(res => {
-              setConversations([res.data, ...records]);
-              setActiveConversation({...res.data});
-            })
+            // getConversationByTargetUid(targetUid).then(res => {
+            //   setConversations([res.data, ...records]);
+            //   setActiveConversation({...res.data});
+            // })
           }
           //私聊过了
           else {
@@ -72,8 +73,8 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
         }
       }
     })
-
-    const newSocket = new WebSocket('ws://antares.cool:8666');
+    const tokenValue = localStorage.getItem('tokenValue');
+    const newSocket = new WebSocket('wss://qingxin.store/ws?token='+tokenValue);
     setSocket(newSocket);
 
     // 在组件卸载时关闭WebSocket连接
@@ -88,35 +89,41 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
       socket.onopen = () => {
         console.log('WebSocket连接已建立');
         //发送建立连接的请求
-        const connectCommand: Message.Command = {
-          code: 10001,
-          uid: currentUser.id,
+        const connectCommand = {
+          type: 4,
         };
         socket.send(JSON.stringify(connectCommand));
       };
 
       socket.onmessage = (event) => {
         const res: API.R = JSON.parse(event.data);
-        if(res.code === 200 && res.data){
-          const {conversationId} = res.data;
-          let target: Message.Conversation | null = null;
-          const others: Message.Conversation[] = [];
+        if(res.data){
+          console.log(res.data);
+          const {roomId} = res.data;
+          let target: API.RoomFriendVo | null = null;
+          const others: API.RoomFriendVo[] = [];
           //消息来自当前打开的聊天窗口
-          if(activeConversation && conversationId === activeConversation.id){
+          if(activeConversation && roomId  == activeConversation.roomId){
             setMessages([...messages, res.data])
+            // alert("Active进来了")
             for (const conversation of conversations) {
-              if(conversation.id === conversationId){
+            // alert("进来了")
+              if(conversation.roomId == roomId){
+                console.log("conversation")
+                console.log(conversation)
                 target = {...conversation, lastMessage: res.data.content};
               } else {
+
                 others.push(conversation);
               }
             }
           }
           //消息来自其他聊天窗口（或者不属于任何一个聊天窗口）
           else {
+            // alert("没进来")
             for (const conversation of conversations) {
-              if(conversation.id === conversationId){
-                target = {...conversation, unread: conversation.unread + 1, lastMessage: res.data.content};
+              if(conversation.roomId == roomId){
+                target = {...conversation, unread: conversation.unread as any + 1, lastMessage: res.data.content};
               } else {
                 others.push(conversation);
               }
@@ -134,7 +141,7 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
               }
             }
           }
-          setConversations([target as Message.Conversation, ...others]);
+          setConversations([target as API.RoomFriendVo, ...others]);
         }
       };
 
@@ -150,16 +157,17 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
 
   useEffect(()=>{
     //获取与用户的所有聊天消息
-    if(activeConversation && activeConversation.fromUid > 0){
-      listMessageVoByPage({
-        pageNum: msgPageNum,
+    if(activeConversation &&activeConversation.fromUid&& activeConversation.fromUid > 0){
+      getMsgPageUsingGET({
         pageSize: 30,
-        conversationId: activeConversation.id
+        roomId: activeConversation.roomId as any
       }).then(res => {
-        if(res.code === 200){
-          const {records, total} = res.data;
-          setMessages(records);
-          setMsgTotal(total);
+        if(res.code === 0){
+          if (res.data?.list){
+            setMessages(res.data?.list);
+            setMsgTotal(10);
+
+          }
         }
       })
     }
@@ -171,35 +179,39 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
       const keyword = value.trim(); // 去除搜索关键词左右的空格
       const regex = new RegExp(keyword, "i"); // 创建正则表达式对象，i 表示不区分大小写
 
-      setSearchConversations(conversations.filter(conversation => regex.test(conversation.fromUsername)));
+
+        setSearchConversations(conversations.filter(conversation =>
+          regex.test(conversation.fromUsername as any))
+        );
     }
   }, [value]);
 
-  const sendMessage = (message: Message.MessageSend) => {
+  const sendMessage = (message: any) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
-      const command: Message.Command = {
-        code: 10002,
-        uid: currentUser?.uid,
-        chatMessage: message
+      const command = {
+        type: 5,
+        uid: message.toUid,
+        data:message
       };
       socket.send(JSON.stringify(command));
     }
   };
 
-  const changeConversation = (newConversation: Message.Conversation) => {
-    if(!activeConversation || newConversation.id !== activeConversation.id){
+  const changeConversation = (newConversation: API.RoomFriendVo) => {
+    if(!activeConversation || newConversation.roomId !== activeConversation.roomId){
       setActiveConversation({...newConversation, unread: 0});
       setConversations(conversations.map(conversation =>
-        conversation.id === newConversation.id ? {...newConversation, unread: 0} : conversation));
+        conversation.roomId == newConversation.roomId ? {...newConversation, unread: 0} : conversation));
       setInitLoaded(false);
       setMsgPageNum(1);
       if (socket && socket.readyState === WebSocket.OPEN) {
-        const command = {
-          code: 10003,
-          uid: currentUser?.uid,
-          conversationId: newConversation.id
-        };
-        socket.send(JSON.stringify(command));
+        //TODO 切换会话
+        // const command = {
+        //   code: 10003,
+        //   uid: currentUser?.uid,
+        //   conversationId: newConversation.id
+        // };
+        // socket.send(JSON.stringify(command));
       }
     }
     // @ts-ignore
@@ -214,13 +226,14 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
     if(initLoaded && activeConversation && messages.length < msgTotal){
       setLoadingMore(true);
       setMsgPageNum(msgPageNum + 1);
-      listMessageVoByPage({
-        pageNum: msgPageNum + 1,
+      getMsgPageUsingGET({
+        cursor : (msgPageNum +10).toString(),
         pageSize: 10,
-        conversationId: activeConversation.id
+        roomId: activeConversation.id as any
       }).then(res => {
-        if(res.code === 200){
-          const {records} = res.data;
+        if(res.code === 0){
+          const records = res.data?.list;
+          // @ts-ignore
           setMessages([...records, ...messages]);
           setLoadingMore(false);
         }
@@ -229,7 +242,7 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
   };
 
 
-  if(!currentUser || currentUser.uid === targetUid){
+  if(!currentUser || currentUser.id === targetUid){
     history.push('/note');
     return <></>
   }
@@ -249,9 +262,9 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
             StringUtils.isNotEmpty(value) ?
             searchConversations.map(conversation =>
               <Conversation
-                active={activeConversation && activeConversation.id === conversation.id}
+                active={activeConversation && activeConversation.roomId == conversation.roomId}
                 onClick={()=>changeConversation(conversation)}
-                key={conversation.id}
+                key={conversation.roomId}
                 name={conversation.fromUsername}
                 info={conversation.lastMessage}
                 unreadCnt={conversation.unread}
@@ -260,9 +273,9 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
               </Conversation>) :
             conversations.map(conversation =>
               <Conversation
-                active={activeConversation && activeConversation.id === conversation.id}
+                active={activeConversation && activeConversation.roomId == conversation.roomId}
                 onClick={()=>changeConversation(conversation)}
-                key={conversation.id}
+                key={conversation.roomId}
                 name={conversation.fromUsername}
                 info={conversation.lastMessage}
                 unreadCnt={conversation.unread}
@@ -292,14 +305,14 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
           <MessageList ref={msgListRef} loadingMore={loadingMore} onYReachStart={onYReachStart}>
             {
               messages.map((message, index) => {
-                const flag = message.fromUid === currentUser.uid;
-                return <Message key={index} model={{
-                  message: message.content,
-                  sender: message.fromUsername,
+                const flag = message.fromUser?.uid === currentUser.id;
+                return <Message key={message.message?.id} model={{
+                  message: message.message?.content,
+                  sender: message.fromUser?.username,
                   direction: flag ? "outgoing" : "incoming",
                   position: "single"
                 }} avatarPosition={flag ? 'tr' : 'tl'}>
-                  <Avatar style={{width: 36,minWidth: 36,height:36,minHeight: 36}} src={message.avatar} name="Zoe" />
+                  <Avatar style={{width: 36,minWidth: 36,height:36,minHeight: 36}} src={message.fromUser?.avatar} name="Zoe" />
                 </Message>
               })
             }
@@ -308,27 +321,28 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
             value={messageInputValue}
             onChange={val => setMessageInputValue(val)}
             onSend={() => {
-              const msg: Message.MessageSend = {
-                type: 1,
-                conversationId: activeConversation?.id,
-                fromUid: currentUser.uid,
+              const msg = {
+                type: 2,
                 toUid: activeConversation.fromUid,
                 content: messageInputValue,
-                createTime: new Date()
+
               }
-              const msgVo: Message.MessageVo = {
-                conversationId: activeConversation.id,
-                fromUid: currentUser.uid,
-                fromUsername: currentUser.username,
-                avatar: currentUser.avatar,
-                content: messageInputValue,
-                createTime: new Date(),
+              const msgVo: API.ChatMessageResp = {
+                fromUser: {
+                  uid: currentUser.id,
+                  username: currentUser.userName,
+                  avatar: currentUser.userAvatar,
+                },
+                message: {
+                  content: messageInputValue,
+                },
               }
               setMessages([...messages, msgVo]);
+              // setMessages([...messages]);
               setConversations([
                 {...activeConversation, lastMessage: messageInputValue},
                 ...conversations.filter(conversation =>
-                  conversation.id !== activeConversation?.id)]);
+                  conversation.roomId !== activeConversation?.roomId)]);
               sendMessage(msg);
               setMessageInputValue("");
             }}

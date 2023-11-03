@@ -50,6 +50,7 @@ export default defineConfig({
     {
       requestLibPath: "import request from '@/plugins/globalRequest';",
       schemaPath: 'https://qingxin.store/wanwu/wanwu-usercenter/api/v2/api-docs',
+      // schemaPath: 'http://localhost:8806/api/v2/api-docs',
       projectName: 'user'
     },
     // {
