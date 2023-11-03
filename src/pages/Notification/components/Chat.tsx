@@ -11,7 +11,9 @@ import {
   MessageInput,
   MessageList,
   Search,
-  Sidebar
+  Sidebar,
+  VideoCallButton,
+  VoiceCallButton
 } from "@chatscope/chat-ui-kit-react";
 import {useLocation, useModel,history} from "umi";
 import {StringUtils} from "@/utils";
@@ -60,6 +62,7 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
           const filter = records.filter((record: API.RoomFriendVo) => record.fromUid === targetUid);
           //没跟这个人私聊过（新建conversation并将其置顶）
           if(filter.length === 0){
+            alert("没有私聊过哇")
             // getConversationByTargetUid(targetUid).then(res => {
             //   setConversations([res.data, ...records]);
             //   setActiveConversation({...res.data});
@@ -280,7 +283,7 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
                 info={conversation.lastMessage}
                 unreadCnt={conversation.unread}
               >
-                <Avatar src={conversation.avatar}/>
+                <Avatar src={conversation.avatar} status="available"/>
               </Conversation>)
           }
         </ConversationList>
@@ -300,7 +303,12 @@ const Chat: React.FC<{ref: any}> = forwardRef(({}, ref) => {
         </div> :
         <ChatContainer>
           <ConversationHeader>
-            <ConversationHeader.Content userName={activeConversation.fromUsername} style={{margin: '0 auto'}}/>
+            <ConversationHeader.Back />
+            <ConversationHeader.Content userName={activeConversation.fromUsername}/>
+            <ConversationHeader.Actions>
+              <VoiceCallButton />
+              <VideoCallButton />
+            </ConversationHeader.Actions>
           </ConversationHeader>
           <MessageList ref={msgListRef} loadingMore={loadingMore} onYReachStart={onYReachStart}>
             {
